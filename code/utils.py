@@ -10,7 +10,7 @@ def get_sample():
     initial = gen.board.copy()
     x_out = [a.value for x in initial.rows.values() for a in x]
 
-    gen.reduce_via_logical(81)
+    gen.reduce_via_logical(np.random.randint(31, 360))
 
     removed = gen.board.copy()
 

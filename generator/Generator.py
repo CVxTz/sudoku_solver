@@ -15,7 +15,7 @@ class Generator:
     def randomize(self, iterations):
 
         # not allowing transformations on a partial puzzle
-        if len(self.board.get_used_cells())==81:
+        if len(self.board.get_used_cells()) == 81:
 
             # looping through iterations
             for x in range(0, iterations):
@@ -28,9 +28,9 @@ class Generator:
 
                 # in order to select which row and column we shuffle an array of
                 # indices and take both elements
-                options = list(range(0,3))
+                options = list(range(0, 3))
                 random.shuffle(options)
-                piece1, piece2 = options[0],options[1]
+                piece1, piece2 = options[0], options[1]
 
                 # pick case according to random to do transformation
                 if case == 0:
@@ -42,22 +42,22 @@ class Generator:
                 elif case == 3:
                     self.board.swap_band(piece1, piece2)
         else:
-            raise Exception('Rearranging partial board may compromise uniqueness.')
+            raise Exception("Rearranging partial board may compromise uniqueness.")
 
     # method gets all possible values for a particular cell, if there is only one
     # then we can remove that cell
-    def reduce_via_logical(self, cutoff = 81):
+    def reduce_via_logical(self, cutoff=81):
         cells = self.board.get_used_cells()
         random.shuffle(cells)
         for cell in cells:
-                if len(self.board.get_possibles(cell)) == 1:
-                    cell.value = 0
-                    cutoff -= 1
-                if cutoff == 0:
-                    break
+            if len(self.board.get_possibles(cell)) == 1:
+                cell.value = 0
+                cutoff -= 1
+            if cutoff == 0:
+                break
 
     # returns current state of generator including number of empty cells and a representation
     # of the puzzle
     def get_current_state(self):
         template = "There are currently %d starting cells.\n\rCurrent puzzle state:\n\r\n\r%s\n\r"
-        return template % (len(self.board.get_used_cells()),self.board.__str__())
+        return template % (len(self.board.get_used_cells()), self.board.__str__())

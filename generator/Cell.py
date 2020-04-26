@@ -16,3 +16,6 @@ class Cell:
         temp = (self.value,self.row,self.col,self.box)
         return "Value: %d, Row: %d, Col: %d, Box: %d" % temp
 
+    def __repr__(self):
+        return str(self.value)
+

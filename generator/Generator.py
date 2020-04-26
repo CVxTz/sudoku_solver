@@ -6,20 +6,10 @@ import functools
 class Generator:
 
     # constructor for generator, reads in a space delimited
-    def __init__(self, starting_file):
-
-        # opening file
-        f = open(starting_file)
-
-        # reducing file to a list of numbers
-        numbers = filter(lambda x: x in '123456789',list(functools.reduce(lambda x,y:x+y,f.readlines())))
-        numbers = list(map(int,numbers))
-
-        # closing file
-        f.close()
+    def __init__(self, base_numbers):
 
         # constructing board
-        self.board = Board(numbers)
+        self.board = Board(base_numbers.copy())
 
     # function randomizes an existing complete puzzle
     def randomize(self, iterations):

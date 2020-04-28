@@ -22,7 +22,7 @@ class Board:
             # looping columns
             for col in range(0, 9):
                 # calculating box
-                box = 3 * (row / 3) + (col / 3)
+                box = 3 * (row // 3) + (col // 3)
 
                 # creating cell instance
                 cell = Cell(row, col, box)
@@ -151,12 +151,15 @@ class Board:
         solved = True
 
         for x, v in self.rows.items():
+            v = [x.value for x in v]
             solved = solved and len(set(v)) == 9
 
         for x, v in self.columns.items():
+            v = [x.value for x in v]
             solved = solved and len(set(v)) == 9
 
         for x, v in self.boxes.items():
+            v = [x.value for x in v]
             solved = solved and len(set(v)) == 9
 
         return solved

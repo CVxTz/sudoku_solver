@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # img, mask = get_char_png("ttf")
     # mask = mask.squeeze()
 
-    img = cv2.imread("example6.png")
+    img = cv2.imread("example1.png")
     img = cv2.resize(img, (256, 256))
 
     mask_pred = (

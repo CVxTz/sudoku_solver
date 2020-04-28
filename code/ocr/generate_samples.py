@@ -35,7 +35,10 @@ def get_char_png(fonts_path):
             if np.random.uniform(0, 1) < 0.2:
                 integer = choice([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-                draw.text((start_x, start_y), str(integer), (0, 0, 0), font=font)
+                color = (0, 0, 0) if np.random.uniform(0, 1) < 0.9 else \
+                    (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+
+                draw.text((start_x, start_y), str(integer), color, font=font)
 
                 img = np.array(pil_img)
 
@@ -58,10 +61,14 @@ def get_char_png(fonts_path):
             start_y = j * size
 
             if np.random.uniform(0, 1) < 0.05:
-                draw.line((start_x, 0, start_x, image_size), fill=0)
+                draw.line((start_x, 0, start_x, image_size),
+                          fill=(np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)),
+                          width=np.random.randint(0, 5))
 
             if np.random.uniform(0, 1) < 0.05:
-                draw.line((0, start_y, image_size, start_y), fill=0)
+                draw.line((0, start_y, image_size, start_y),
+                          fill=(np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)),
+                          width=np.random.randint(0, 5))
 
     img = np.array(pil_img)
 

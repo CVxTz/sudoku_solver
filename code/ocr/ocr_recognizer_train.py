@@ -54,15 +54,15 @@ def get_recognizer():
 
 
 def get_seq():
-    sometimes = lambda aug: iaa.Sometimes(0.3, aug)
+    sometimes = lambda aug: iaa.Sometimes(0.1, aug)
     seq = iaa.Sequential(
         [
             sometimes(iaa.AdditiveGaussianNoise(scale=0.07 * 255)),
             sometimes(iaa.GaussianBlur(sigma=(0, 3.0))),
-            sometimes(iaa.MedianBlur(k=(3, 11))),
-            sometimes(iaa.AverageBlur(k=((5, 11), (1, 3)))),
-            sometimes(iaa.AveragePooling([2, 8])),
-            sometimes(iaa.MaxPooling([2, 8])),
+            sometimes(iaa.MedianBlur(k=(1, 5))),
+            sometimes(iaa.AverageBlur(k=((1, 5), (1, 3)))),
+            sometimes(iaa.AveragePooling([1, 5])),
+            sometimes(iaa.MaxPooling([1, 5])),
             sometimes(iaa.Sequential([iaa.Resize({"height": 64, "width": 64}),
                                       iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
             sometimes(iaa.Sequential([iaa.Resize({"height": 16, "width": 16}),
@@ -91,6 +91,7 @@ def gen(size=32, fonts_path="ttf", augment=True):
         array_gt = np.array(list_gt)[..., np.newaxis]
 
         yield np.array(list_images), array_gt
+
 
 def train_recognizer():
     model_h5 = "ocr_recognizer.h5"
@@ -126,6 +127,7 @@ def train_recognizer():
     )
 
     model.save_weights(model_h5)
+
 
 if __name__ == "__main__":
     train_recognizer()

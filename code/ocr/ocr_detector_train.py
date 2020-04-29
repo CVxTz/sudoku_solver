@@ -81,12 +81,12 @@ def get_detector():
 
 
 def get_seq():
-    sometimes = lambda aug: iaa.Sometimes(0.3, aug)
+    sometimes = lambda aug: iaa.Sometimes(0.1, aug)
     seq = iaa.Sequential(
         [
             sometimes(iaa.AdditiveGaussianNoise(scale=0.07 * 255)),
             sometimes(iaa.GaussianBlur(sigma=(0, 3.0))),
-            sometimes(iaa.MedianBlur(k=(3, 11))),
+            sometimes(iaa.MedianBlur(k=(1, 5))),
             sometimes(iaa.AverageBlur(k=((5, 11), (1, 3)))),
             sometimes(iaa.AveragePooling([2, 8])),
             sometimes(iaa.MaxPooling([2, 8])),
@@ -144,7 +144,7 @@ def train_detector():
 
     history = model.fit_generator(
         gen(),
-        epochs=200,
+        epochs=100,
         verbose=1,
         steps_per_epoch=128,
         validation_data=gen(augment=False),

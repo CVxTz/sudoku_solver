@@ -7,13 +7,11 @@ from PIL import ImageDraw
 from PIL import ImageFont
 import time
 from skimage.morphology import square, dilation
-from glob import glob
 from pathlib import Path
 
 
-def get_char_png(fonts_path):
-    paths = [str(x) for x in Path(fonts_path).glob("*.otf")] + [str(x) for x in Path(fonts_path).glob("*.ttf")]
-    font_name = choice(paths)
+def get_grid_char_img(fonts_paths):
+    font_name = choice(fonts_paths)
     size = np.random.randint(5, 40)
     font = ImageFont.truetype(font_name, size)
 
@@ -42,11 +40,12 @@ def get_char_png(fonts_path):
                 img = np.array(pil_img)
 
                 char_box = (
-                        255 - img[start_y: (start_y + size), start_x: (start_x + size), :]
+                        255 - img[start_y: int(start_y + 1.2 * size), start_x: int(start_x + 1.2 * size), :]
                 )
-                char_mask = mask[start_y: (start_y + size), start_x: (start_x + size)]
+                char_mask = mask[start_y: int(start_y + 1.2 * size), start_x: int(start_x + 1.2 * size)]
                 char_mask[char_box[..., 0] > 10] = integer
-                mask[start_y: (start_y + size), start_x: (start_x + size)] = dilation(char_mask, square(3))
+                mask[start_y: int(start_y + 1.2 * size), start_x: int(start_x + 1.2 * size)] = \
+                    dilation(char_mask, square(3))
 
     for i in range(step):
         for j in range(step):
@@ -67,17 +66,53 @@ def get_char_png(fonts_path):
     img = np.array(pil_img)
 
     for i in range(3):
-        img[..., i] = np.random.uniform(0.5, 1) * img[..., i]
+        img[..., i] = np.clip(1 - np.fabs(np.random.normal(0, 0.2)), 0, 1) * img[..., i]
 
     return img, mask
+
+
+def get_char_img(fonts_paths):
+    font_name = choice(fonts_paths)
+    size = np.random.randint(7, 40)
+    font = ImageFont.truetype(font_name, size)
+
+    image_size = int(1.2 * size)
+
+    img = 255 * np.ones((image_size, image_size, 3), np.uint8)
+
+    pil_img = Image.fromarray(img)
+    draw = ImageDraw.Draw(pil_img)
+
+    integer = choice([1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+    color = (0, 0, 0) if np.random.uniform(0, 1) < 0.9 else \
+        (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+
+    draw.text((0, 0), str(integer), color, font=font)
+
+    img = np.array(pil_img)
+
+    img = cv2.resize(img, (32, 32))
+
+    for i in range(3):
+        img[..., i] = np.clip(1 - np.fabs(np.random.normal(0, 0.2)), 0, 1) * img[..., i]
+
+    return img, integer
 
 
 if __name__ == "__main__":
     start = time.time()
 
-    img, mask = get_char_png(fonts_path="ttf")
+    fonts_paths = [str(x) for x in Path("ttf").glob("*.otf")] + \
+                  [str(x) for x in Path("ttf").glob("*.ttf")]
+
+    img, mask = get_grid_char_img(fonts_paths=fonts_paths)
 
     cv2.imwrite("img.png", img)
     cv2.imwrite("mask.png", 30 * mask)
 
     print(time.time() - start)
+
+    img, label = get_char_img(fonts_paths=fonts_paths)
+
+    cv2.imwrite("char_%s.png" % label, img)

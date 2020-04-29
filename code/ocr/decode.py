@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from skimage import measure
 
-from generate_samples import get_char_png
+from generate_samples import get_grid_char_img
 from ocr_detector_train import get_detector
 from skimage.morphology import square, dilation, erosion
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     model.load_weights(model_h5, by_name=True)
 
-    img, mask = get_char_png("ttf")
+    img, mask = get_grid_char_img("ttf")
     mask = mask.squeeze()
 
     # img = cv2.imread("example1.png")

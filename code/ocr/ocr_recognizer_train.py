@@ -1,4 +1,3 @@
-# part of this script was taken from https://github.com/jocicmarko/ultrasound-nerve-segmentation
 
 import imgaug.augmenters as iaa
 import numpy as np
@@ -9,20 +8,22 @@ from tensorflow.keras.layers import (
     concatenate,
     Conv2D,
     Conv2DTranspose,
+    GlobalMaxPool2D,
+    Dense
 )
 from pathlib import Path
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-from generate_samples import get_grid_char_img
+from generate_samples import get_char_img
 
 batch_size = 32
-input_shape = (256, 256)
+input_shape = (32, 32)
 
 
-def get_detector():
+def get_recognizer():
 
-    i = 2
+    i = 4
     inputs = Input((None, None, 3))
 
     conv1 = Conv2D(2**i, 3, padding="same", activation="selu")(inputs)
@@ -35,43 +36,15 @@ def get_detector():
 
     conv3 = Conv2D(4*2**i, 3, padding="same", activation="selu")(pool2)
     conv3 = Conv2D(4*2**i, 3, padding="same", activation="selu")(conv3)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
+    pool3 = GlobalMaxPool2D()(conv3)
 
-    conv4 = Conv2D(8*2**i, 3, padding="same", activation="selu")(pool3)
-    conv4 = Conv2D(8*2**i, 3, padding="same", activation="selu")(conv4)
-    pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
+    d_out = Dense(10, activation="softmax")(pool3)
 
-    conv5 = Conv2D(16*2**i, 3, padding="same", activation="selu")(pool4)
-    conv5 = Conv2D(16*2**i, 3, padding="same", activation="selu")(conv5)
-
-    up6 = concatenate([Conv2DTranspose(16*2**i, 2, strides=2, padding="same", activation="selu")(conv5),
-                       conv4], axis=3)
-    conv6 = Conv2D(8*2**i, (3, 3), padding="same", activation="selu")(up6)
-    conv6 = Conv2D(8*2**i, (3, 3), padding="same", activation="selu")(conv6)
-
-    up7 = concatenate([Conv2DTranspose(8*2**i, 2, strides=2, padding="same", activation="selu")(conv6),
-                       conv3],
-                      axis=3)
-    conv7 = Conv2D(4*2**i, 3, padding="same", activation="selu")(up7)
-    conv7 = Conv2D(4*2**i, 3, padding="same", activation="selu")(conv7)
-
-    up8 = concatenate([Conv2DTranspose(4*2**i, 2, strides=2, padding="same", activation="selu")(conv7),
-                       conv2], axis=3, )
-    conv8 = Conv2D(3*2**i, (3, 3), padding="same", activation="selu")(up8)
-    conv8 = Conv2D(3*2**i, (3, 3), padding="same", activation="selu")(conv8)
-
-    up9 = concatenate([Conv2DTranspose(2*2**i, 2, strides=2, padding="same", activation="selu")(conv8),
-                       conv1], axis=3, )
-    conv9 = Conv2D(2*2**i, (3, 3), padding="same", activation="selu")(up9)
-    conv9 = Conv2D(2*2**i, (3, 3), padding="same", activation="selu")(conv9)
-
-    conv10 = Conv2D(1, (1, 1), activation="sigmoid")(conv9)
-
-    model = Model(inputs=[inputs], outputs=[conv10])
+    model = Model(inputs=[inputs], outputs=[d_out])
 
     model.compile(
         optimizer=Adam(lr=3e-4),
-        loss=losses.binary_crossentropy,
+        loss=losses.sparse_categorical_crossentropy,
         metrics=["acc"],
     )
 
@@ -92,7 +65,7 @@ def get_seq():
             sometimes(iaa.MaxPooling([2, 8])),
             sometimes(iaa.Sequential([iaa.Resize({"height": 64, "width": 64}),
                                       iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
-            sometimes(iaa.Sequential([iaa.Resize({"height": 512, "width": 512}),
+            sometimes(iaa.Sequential([iaa.Resize({"height": 16, "width": 16}),
                                       iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
 
         ],
@@ -101,7 +74,7 @@ def get_seq():
     return seq
 
 
-def gen(size=8, fonts_path="ttf", augment=True):
+def gen(size=32, fonts_path="ttf", augment=True):
     seq = get_seq()
 
     fonts_paths = [str(x) for x in Path(fonts_path).glob("*.otf")] +\
@@ -109,24 +82,23 @@ def gen(size=8, fonts_path="ttf", augment=True):
 
     while True:
 
-        samples = [get_grid_char_img(fonts_paths=fonts_paths) for _ in range(size)]
+        samples = [get_char_img(fonts_paths=fonts_paths) for _ in range(size)]
         list_images, list_gt = zip(*samples)
 
         if augment:
             list_images = seq.augment_images(images=list_images)
 
-        array_gt = np.array(list_gt).squeeze()
-        binary_gt = (array_gt > 0).astype(float)
+        array_gt = np.array(list_gt)[..., np.newaxis]
 
-        yield np.array(list_images), binary_gt
+        yield np.array(list_images), array_gt
 
 
 if __name__ == "__main__":
-    model_h5 = "ocr_detector.h5"
+    model_h5 = "ocr_recognizer.h5"
 
     print("Model : %s" % model_h5)
 
-    model = get_detector()
+    model = get_recognizer()
 
     try:
         model.load_weights(model_h5, by_name=True)

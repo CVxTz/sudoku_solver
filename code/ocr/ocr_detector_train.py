@@ -121,7 +121,7 @@ def gen(size=8, fonts_path="ttf", augment=True):
         yield np.array(list_images), binary_gt
 
 
-if __name__ == "__main__":
+def train_detector():
     model_h5 = "ocr_detector.h5"
 
     print("Model : %s" % model_h5)
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     checkpoint = ModelCheckpoint(
         model_h5, monitor="acc", verbose=1, save_best_only=True, mode="max"
     )
-    early = EarlyStopping(monitor="acc", mode="max", patience=1000, verbose=1)
+    early = EarlyStopping(monitor="acc", mode="max", patience=40, verbose=1)
     redonplat = ReduceLROnPlateau(
         monitor="acc", mode="max", patience=20, verbose=1, min_lr=1e-7
     )
@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
     history = model.fit_generator(
         gen(),
-        epochs=2000,
+        epochs=200,
         verbose=1,
         steps_per_epoch=128,
         validation_data=gen(augment=False),
@@ -155,3 +155,7 @@ if __name__ == "__main__":
     )
 
     model.save_weights(model_h5)
+
+
+if __name__ == "__main__":
+    train_detector()

@@ -23,7 +23,7 @@ input_shape = (32, 32)
 
 def get_recognizer():
 
-    i = 4
+    i = 6
     inputs = Input((None, None, 3))
 
     conv1 = Conv2D(2**i, 3, padding="same", activation="selu")(inputs)
@@ -92,8 +92,7 @@ def gen(size=32, fonts_path="ttf", augment=True):
 
         yield np.array(list_images), array_gt
 
-
-if __name__ == "__main__":
+def train_recognizer():
     model_h5 = "ocr_recognizer.h5"
 
     print("Model : %s" % model_h5)
@@ -108,7 +107,7 @@ if __name__ == "__main__":
     checkpoint = ModelCheckpoint(
         model_h5, monitor="acc", verbose=1, save_best_only=True, mode="max"
     )
-    early = EarlyStopping(monitor="acc", mode="max", patience=1000, verbose=1)
+    early = EarlyStopping(monitor="acc", mode="max", patience=40, verbose=1)
     redonplat = ReduceLROnPlateau(
         monitor="acc", mode="max", patience=20, verbose=1, min_lr=1e-7
     )
@@ -116,7 +115,7 @@ if __name__ == "__main__":
 
     history = model.fit_generator(
         gen(),
-        epochs=2000,
+        epochs=200,
         verbose=1,
         steps_per_epoch=128,
         validation_data=gen(augment=False),
@@ -127,3 +126,6 @@ if __name__ == "__main__":
     )
 
     model.save_weights(model_h5)
+
+if __name__ == "__main__":
+    train_recognizer()

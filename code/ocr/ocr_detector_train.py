@@ -19,83 +19,58 @@ batch_size = 32
 input_shape = (256, 256)
 
 
-def get_unet():
+def get_detector():
+
+    i = 2
     inputs = Input((None, None, 3))
 
-    conv1 = Conv2D(16, (3, 3), padding="same", activation="selu")(inputs)
-    conv1 = Conv2D(16, (3, 3), padding="same", activation="selu")(conv1)
+    conv1 = Conv2D(2**i, 3, padding="same", activation="selu")(inputs)
+    conv1 = Conv2D(2**i, 3, padding="same", activation="selu")(conv1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
 
-    conv2 = Conv2D(16, (3, 3), padding="same", activation="selu")(pool1)
-    conv2 = Conv2D(16, (3, 3), padding="same", activation="selu")(conv2)
+    conv2 = Conv2D(2*2**i, 3, padding="same", activation="selu")(pool1)
+    conv2 = Conv2D(2*2**i, 3, padding="same", activation="selu")(conv2)
     pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
 
-    conv3 = Conv2D(32, (3, 3), padding="same", activation="selu")(pool2)
-    conv3 = Conv2D(32, (3, 3), padding="same", activation="selu")(conv3)
+    conv3 = Conv2D(4*2**i, 3, padding="same", activation="selu")(pool2)
+    conv3 = Conv2D(4*2**i, 3, padding="same", activation="selu")(conv3)
     pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
 
-    conv4 = Conv2D(64, (3, 3), padding="same", activation="selu")(pool3)
-    conv4 = Conv2D(64, (3, 3), padding="same", activation="selu")(conv4)
+    conv4 = Conv2D(8*2**i, 3, padding="same", activation="selu")(pool3)
+    conv4 = Conv2D(8*2**i, 3, padding="same", activation="selu")(conv4)
     pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
 
-    conv5 = Conv2D(128, (3, 3), padding="same", activation="selu")(pool4)
-    conv5 = Conv2D(128, (3, 3), padding="same", activation="selu")(conv5)
+    conv5 = Conv2D(16*2**i, 3, padding="same", activation="selu")(pool4)
+    conv5 = Conv2D(16*2**i, 3, padding="same", activation="selu")(conv5)
 
-    up6 = concatenate(
-        [
-            Conv2DTranspose(
-                256, (2, 2), strides=(2, 2), padding="same", activation="selu"
-            )(conv5),
-            conv4,
-        ],
-        axis=3,
-    )
-    conv6 = Conv2D(64, (3, 3), padding="same", activation="selu")(up6)
-    conv6 = Conv2D(64, (3, 3), padding="same", activation="selu")(conv6)
+    up6 = concatenate([Conv2DTranspose(16*2**i, 2, strides=2, padding="same", activation="selu")(conv5),
+                       conv4], axis=3)
+    conv6 = Conv2D(8*2**i, (3, 3), padding="same", activation="selu")(up6)
+    conv6 = Conv2D(8*2**i, (3, 3), padding="same", activation="selu")(conv6)
 
-    up7 = concatenate(
-        [
-            Conv2DTranspose(
-                128, (2, 2), strides=(2, 2), padding="same", activation="selu"
-            )(conv6),
-            conv3,
-        ],
-        axis=3,
-    )
-    conv7 = Conv2D(32, (3, 3), padding="same", activation="selu")(up7)
-    conv7 = Conv2D(32, (3, 3), padding="same", activation="selu")(conv7)
+    up7 = concatenate([Conv2DTranspose(8*2**i, 2, strides=2, padding="same", activation="selu")(conv6),
+                       conv3],
+                      axis=3)
+    conv7 = Conv2D(4*2**i, 3, padding="same", activation="selu")(up7)
+    conv7 = Conv2D(4*2**i, 3, padding="same", activation="selu")(conv7)
 
-    up8 = concatenate(
-        [
-            Conv2DTranspose(
-                64, (2, 2), strides=(2, 2), padding="same", activation="selu"
-            )(conv7),
-            conv2,
-        ],
-        axis=3,
-    )
-    conv8 = Conv2D(16, (3, 3), padding="same", activation="selu")(up8)
-    conv8 = Conv2D(16, (3, 3), padding="same", activation="selu")(conv8)
+    up8 = concatenate([Conv2DTranspose(4*2**i, 2, strides=2, padding="same", activation="selu")(conv7),
+                       conv2], axis=3, )
+    conv8 = Conv2D(3*2**i, (3, 3), padding="same", activation="selu")(up8)
+    conv8 = Conv2D(3*2**i, (3, 3), padding="same", activation="selu")(conv8)
 
-    up9 = concatenate(
-        [
-            Conv2DTranspose(
-                32, (2, 2), strides=(2, 2), padding="same", activation="selu"
-            )(conv8),
-            conv1,
-        ],
-        axis=3,
-    )
-    conv9 = Conv2D(16, (3, 3), padding="same", activation="selu")(up9)
-    conv9 = Conv2D(16, (3, 3), padding="same", activation="selu")(conv9)
+    up9 = concatenate([Conv2DTranspose(2*2**i, 2, strides=2, padding="same", activation="selu")(conv8),
+                       conv1], axis=3, )
+    conv9 = Conv2D(2*2**i, (3, 3), padding="same", activation="selu")(up9)
+    conv9 = Conv2D(2*2**i, (3, 3), padding="same", activation="selu")(conv9)
 
-    conv10 = Conv2D(10, (1, 1), activation="softmax")(conv9)
+    conv10 = Conv2D(1, (1, 1), activation="sigmoid")(conv9)
 
     model = Model(inputs=[inputs], outputs=[conv10])
 
     model.compile(
         optimizer=Adam(lr=3e-4),
-        loss=losses.sparse_categorical_crossentropy,
+        loss=losses.binary_crossentropy,
         metrics=["acc"],
     )
 
@@ -125,26 +100,29 @@ def get_seq():
     return seq
 
 
-def gen(batch_size=16, fonts_path="ttf", augment=True):
+def gen(size=8, fonts_path="ttf", augment=True):
     seq = get_seq()
 
     while True:
 
-        samples = [get_char_png(fonts_path=fonts_path) for _ in range(batch_size)]
+        samples = [get_char_png(fonts_path=fonts_path) for _ in range(size)]
         list_images, list_gt = zip(*samples)
 
         if augment:
             list_images = seq.augment_images(images=list_images)
 
-        yield np.array(list_images), np.array(list_gt)
+        array_gt = np.array(list_gt).squeeze()
+        binary_gt = (array_gt > 0).astype(float)
+
+        yield np.array(list_images), binary_gt
 
 
 if __name__ == "__main__":
-    model_h5 = "ocr.h5"
+    model_h5 = "ocr_detector.h5"
 
     print("Model : %s" % model_h5)
 
-    model = get_unet()
+    model = get_detector()
 
     try:
         model.load_weights(model_h5, by_name=True)
@@ -168,8 +146,8 @@ if __name__ == "__main__":
         validation_data=gen(augment=False),
         validation_steps=64,
         callbacks=callbacks_list,
-        use_multiprocessing=True,
-        workers=8,
+        # use_multiprocessing=True,
+        # workers=8,
     )
 
     model.save_weights(model_h5)

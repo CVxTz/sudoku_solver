@@ -12,25 +12,24 @@ from pathlib import Path
 
 
 def get_char_png(fonts_path):
-
-    paths = [str(x) for x in Path(fonts_path).glob("*.otf")]
+    paths = [str(x) for x in Path(fonts_path).glob("*.otf")] + [str(x) for x in Path(fonts_path).glob("*.ttf")]
     font_name = choice(paths)
-    size = np.random.randint(5, 50)
+    size = np.random.randint(5, 40)
     font = ImageFont.truetype(font_name, size)
 
     image_size = 256
 
     img = 255 * np.ones((image_size, image_size, 3), np.uint8)
-    mask = np.zeros((image_size, image_size, 1), np.uint8)
+    mask = np.zeros((image_size, image_size), np.uint8)
 
     pil_img = Image.fromarray(img)
     draw = ImageDraw.Draw(pil_img)
-    step = min(image_size // size, 30)
+    step = int(min(image_size / (1.2 * size), 30))
     for i in range(step):
         for j in range(step):
 
-            start_x = i * size
-            start_y = j * size
+            start_x = int(i * size * 1.2)
+            start_y = int(j * size * 1.2)
 
             if np.random.uniform(0, 1) < 0.2:
                 integer = choice([1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -43,22 +42,17 @@ def get_char_png(fonts_path):
                 img = np.array(pil_img)
 
                 char_box = (
-                    255 - img[start_y : (start_y + size), start_x : (start_x + size), :]
+                        255 - img[start_y: (start_y + size), start_x: (start_x + size), :]
                 )
-
-                char_box = cv2.GaussianBlur(char_box, (5, 5), cv2.BORDER_DEFAULT)
-
-                char_mask = mask[
-                    start_y : (start_y + size), start_x : (start_x + size), :
-                ]
-
+                char_mask = mask[start_y: (start_y + size), start_x: (start_x + size)]
                 char_mask[char_box[..., 0] > 10] = integer
+                mask[start_y: (start_y + size), start_x: (start_x + size)] = dilation(char_mask, square(3))
 
     for i in range(step):
         for j in range(step):
 
-            start_x = i * size
-            start_y = j * size
+            start_x = int(i * size * 1.2) - 0.3 * size
+            start_y = int(j * size * 1.2) + 0.1 * size
 
             if np.random.uniform(0, 1) < 0.05:
                 draw.line((start_x, 0, start_x, image_size),
@@ -79,7 +73,6 @@ def get_char_png(fonts_path):
 
 
 if __name__ == "__main__":
-
     start = time.time()
 
     img, mask = get_char_png(fonts_path="ttf")

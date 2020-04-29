@@ -4,32 +4,32 @@ import numpy as np
 from skimage import measure
 
 from generate_samples import get_char_png
-from ocr_train import get_unet
+from ocr_detector_train import get_detector
 from skimage.morphology import square, dilation, erosion
 
 if __name__ == "__main__":
-    model_h5 = "ocr.h5"
+    model_h5 = "ocr_detector.h5"
 
     print("Model : %s" % model_h5)
 
-    model = get_unet()
+    model = get_detector()
 
     model.load_weights(model_h5, by_name=True)
 
-    # img, mask = get_char_png("ttf")
-    # mask = mask.squeeze()
+    img, mask = get_char_png("ttf")
+    mask = mask.squeeze()
 
-    img = cv2.imread("example1.png")
-    img = cv2.resize(img, (256, 256))
+    # img = cv2.imread("example1.png")
+    # img = cv2.resize(img, (256, 256))
 
-    mask_pred = (
-        model.predict(img[np.newaxis, ...].astype(np.float)).argmax(axis=-1).squeeze()
-    )
+    mask_pred = model.predict(img[np.newaxis, ...].astype(np.float))
+    mask_pred = (mask_pred > 0.5).astype(np.int).squeeze()
+
 
     show_mask = mask_pred
 
-    show_mask = erosion(show_mask, square(3))
-    show_mask = dilation(show_mask, square(3))
+    # show_mask = erosion(show_mask, square(3))
+    # show_mask = dilation(show_mask, square(3))
 
     label_image = measure.label(show_mask, background=0, connectivity=2)
 

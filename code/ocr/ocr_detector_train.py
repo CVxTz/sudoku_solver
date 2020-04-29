@@ -134,11 +134,11 @@ def train_detector():
         pass
 
     checkpoint = ModelCheckpoint(
-        model_h5, monitor="acc", verbose=1, save_best_only=True, mode="max"
+        model_h5, monitor="val_acc", verbose=1, save_best_only=True, mode="max"
     )
-    early = EarlyStopping(monitor="acc", mode="max", patience=40, verbose=1)
+    early = EarlyStopping(monitor="val_acc", mode="max", patience=40, verbose=1)
     redonplat = ReduceLROnPlateau(
-        monitor="acc", mode="max", patience=20, verbose=1, min_lr=1e-7
+        monitor="val_acc", mode="max", patience=20, verbose=1, min_lr=1e-7
     )
     callbacks_list = [checkpoint, early, redonplat]
 

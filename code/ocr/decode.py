@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,59 +7,89 @@ from skimage import measure
 
 from generate_samples import get_grid_char_img
 from ocr_detector_train import get_detector
-from skimage.morphology import square, dilation, erosion
-
-if __name__ == "__main__":
-    model_h5 = "ocr_detector.h5"
-
-    print("Model : %s" % model_h5)
-
-    model = get_detector()
-
-    model.load_weights(model_h5, by_name=True)
-
-    img, mask = get_grid_char_img("ttf")
-    mask = mask.squeeze()
-
-    # img = cv2.imread("example1.png")
-    # img = cv2.resize(img, (256, 256))
-
-    mask_pred = model.predict(img[np.newaxis, ...].astype(np.float))
-    mask_pred = (mask_pred > 0.5).astype(np.int).squeeze()
+from ocr_recognizer_train import get_recognizer
 
 
-    show_mask = mask_pred
-
-    # show_mask = erosion(show_mask, square(3))
-    # show_mask = dilation(show_mask, square(3))
-
+def mask_to_bboxes(show_mask, threshold=40):
     label_image = measure.label(show_mask, background=0, connectivity=2)
 
     all_chars = []
 
-    fig, ax = plt.subplots(figsize=(15, 15))
-    ax.imshow(img, cmap=plt.cm.gray)
-
     for region in measure.regionprops(label_image):
-        # take regions with large enough areas
-        if region.area >= 40:
-            # draw rectangle around segmented coins
-
+        if region.area >= threshold:
             minr, minc, maxr, maxc = region.bbox
 
-            occurances = [x for x in show_mask[minr:maxr, minc:maxc].ravel() if x != 0]
+            all_chars.append({"char": None, "minc": minc, "maxc": maxc, "minr": minr, "maxr": maxr})
 
-            char_idx = max(set(occurances), key=occurances.count)
+    return all_chars
 
-            all_chars.append(
-                {"char": str(char_idx), "x0": minc, "x1": maxc, "y0": minr, "y1": maxr}
-            )
 
-            bx = (minc, maxc, maxc, minc, minc)
-            by = (minr, minr, maxr, maxr, minr)
+def predict_mask(detector_model, img):
+    mask_pred = detector_model.predict(img[np.newaxis, ...].astype(np.float))
+    mask_pred = (mask_pred > 0.5).astype(np.int).squeeze()
+    return mask_pred
 
-            ax.plot(bx, by, "-b", linewidth=1)
-            ax.text(minc, minr, str(char_idx))
+
+def predict_char_class(recognizer_model, img, all_chars):
+    list_bboxes = []
+
+    for char in all_chars:
+        minr, minc, maxr, maxc = char['minr'], char['minc'], char['maxr'], char['maxc']
+        size = max(maxr - minr, maxc - minc)
+
+        list_bboxes.append(img[minr:(minr + size), minc:(minc + size), :])
+
+    list_bboxes = [cv2.resize(x, (32, 32)) for x in list_bboxes]
+
+    array_bboxes = np.array(list_bboxes).astype(np.float)
+
+    preds = recognizer_model.predict(array_bboxes).argmax(axis=-1).ravel().tolist()
+
+    # list_bboxes = [cv2.imwrite("%s_%s.png" % (j, i), x) for j, (i, x) in enumerate(zip(preds, list_bboxes))]
+
+    for char, pred in zip(all_chars, preds):
+        char["char"] = pred
+
+    return all_chars
+
+
+if __name__ == "__main__":
+
+    detector_model_h5 = "ocr_detector.h5"
+    detector_model = get_detector()
+    detector_model.load_weights(detector_model_h5)
+
+    recognizer_model_h5 = "ocr_recognizer.h5"
+    recognizer_model = get_recognizer()
+    recognizer_model.load_weights(recognizer_model_h5)
+
+    fonts_paths = [str(x) for x in Path("ttf").glob("*.otf")] + \
+                  [str(x) for x in Path("ttf").glob("*.ttf")]
+
+    # img, mask = get_grid_char_img(fonts_paths)
+    # mask = mask.squeeze()
+
+    img = cv2.imread("example3.png")
+    img = cv2.resize(img, (256, 256))
+
+    show_mask = predict_mask(detector_model, img)
+
+    all_chars = mask_to_bboxes(show_mask)
+
+    all_chars = predict_char_class(recognizer_model, img, all_chars)
+
+    fig, ax = plt.subplots(figsize=(15, 15))
+
+    ax.imshow(img, cmap=plt.cm.gray)
+
+    for char in all_chars:
+        minr, minc, maxr, maxc = char['minr'], char['minc'], char['maxr'], char['maxc']
+
+        bx = (minc, maxc, maxc, minc, minc)
+        by = (minr, minr, maxr, maxr, minr)
+
+        ax.plot(bx, by, "-b", linewidth=1)
+        ax.text(minc, minr, str(char["char"]))
 
     plt.show()
 

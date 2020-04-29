@@ -65,8 +65,10 @@ def get_grid_char_img(fonts_paths):
 
     img = np.array(pil_img)
 
-    for i in range(3):
-        img[..., i] = np.clip(1 - np.fabs(np.random.normal(0, 0.2)), 0, 1) * img[..., i]
+    if np.random.uniform(0, 1) < 0.1:
+
+        for i in range(3):
+            img[..., i] = np.clip(1 - np.fabs(np.random.normal(0, 0.2)), 0, 1) * img[..., i]
 
     return img, mask
 
@@ -76,7 +78,7 @@ def get_char_img(fonts_paths):
     size = np.random.randint(7, 40)
     font = ImageFont.truetype(font_name, size)
 
-    image_size = int(1.2 * size)
+    image_size = int(np.random.uniform(0.9, 1.4) * size)
 
     img = 255 * np.ones((image_size, image_size, 3), np.uint8)
 
@@ -88,14 +90,16 @@ def get_char_img(fonts_paths):
     color = (0, 0, 0) if np.random.uniform(0, 1) < 0.9 else \
         (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
 
-    draw.text((0, 0), str(integer), color, font=font)
+    draw.text((np.random.randint(0, size//2 + 1), np.random.randint(0, size//5)), str(integer), color, font=font)
 
     img = np.array(pil_img)
 
     img = cv2.resize(img, (32, 32))
 
-    for i in range(3):
-        img[..., i] = np.clip(1 - np.fabs(np.random.normal(0, 0.2)), 0, 1) * img[..., i]
+    if np.random.uniform(0, 1) < 0.1:
+
+        for i in range(3):
+            img[..., i] = np.clip(1 - np.fabs(np.random.normal(0, 0.2)), 0, 1) * img[..., i]
 
     return img, integer
 

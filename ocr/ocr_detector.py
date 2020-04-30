@@ -14,7 +14,7 @@ from pathlib import Path
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-from generate_samples import get_grid_char_img
+from ocr.generate_samples import get_grid_char_img
 
 batch_size = 32
 input_shape = (256, 256)

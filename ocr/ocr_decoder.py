@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from skimage import measure
 
-from generate_samples import get_grid_char_img
-from ocr_detector import get_detector
-from ocr_recognizer import get_recognizer
+from ocr.generate_samples import get_grid_char_img
+from ocr.ocr_detector import get_detector
+from ocr.ocr_recognizer import get_recognizer
 
 
 def mask_to_bboxes(show_mask, threshold=40):

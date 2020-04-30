@@ -1,15 +1,17 @@
 # Modified from https://github.com/RutledgePaulV/sudoku-generator
 from generator.Board import *
 import functools
+import numpy as np
 
 
 class Generator:
 
     # constructor for generator, reads in a space delimited
-    def __init__(self, base_numbers):
+    def __init__(self, base_numbers, shuffle_base=False):
 
         # constructing board
-        self.board = Board(base_numbers.copy())
+        local_base = shuffle_board(base_numbers.copy()) if shuffle_base else base_numbers.copy()
+        self.board = Board(local_base)
 
     # function randomizes an existing complete puzzle
     def randomize(self, iterations):
@@ -61,3 +63,33 @@ class Generator:
     def get_current_state(self):
         template = "There are currently %d starting cells.\n\rCurrent puzzle state:\n\r\n\r%s\n\r"
         return template % (len(self.board.get_used_cells()), self.board.__str__())
+
+
+def chunker(seq, size):
+    return [seq[pos:pos + size] for pos in range(0, len(seq), size)]
+
+
+def shuffle_board(arr):
+    grid = chunker(arr, size=9)
+
+    if np.random.uniform(0, 1) < 0.5:
+        grid = grid[::-1]
+    if np.random.uniform(0, 1) < 0.5:
+        grid = [a[::-1] for a in grid]
+
+    return [x for a in grid for x in a]
+
+
+if __name__ == "__main__":
+    from generator import base_numbers
+
+    gen_1 = Generator(base_numbers)
+
+    print(gen_1.board)
+
+    print("shuffled")
+
+    gen_2 = Generator(base_numbers, shuffle_base=True)
+
+    print(gen_2.board)
+    print(gen_2.board.is_solved())

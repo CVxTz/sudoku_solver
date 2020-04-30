@@ -7,7 +7,7 @@ import cv2
 sys.path.append("..")
 from generator.Generator import Generator
 from generator import base_numbers
-from solver_models import get_model, predict
+from solver.solver_models import get_model, predict
 from ocr.ocr_decoder import img_to_grid
 from ocr.ocr_detector import get_detector
 from ocr.ocr_recognizer import get_recognizer
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     print("From OCR : ")
 
-    img = cv2.imread("example1.png")
+    img = cv2.imread("example5.png")
 
     grid = img_to_grid(img, detector_model, recognizer_model, plot_path="plot.png", print_result=False)
 

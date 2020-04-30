@@ -13,7 +13,7 @@ from tensorflow.keras.layers import Input, MaxPooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-from generate_samples import get_char_img
+from ocr.generate_samples import get_char_img
 
 batch_size = 32
 input_shape = (32, 32)

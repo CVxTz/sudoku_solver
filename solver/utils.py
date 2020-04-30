@@ -16,8 +16,8 @@ def replace_with_zeros(x_arr, ratio=0.5):
 
 def get_sample(random_replace=True):
 
-    gen = Generator(base_numbers)
-    gen.randomize(np.random.randint(31, 360))
+    gen = Generator(base_numbers, shuffle_base=True)
+    gen.randomize(np.random.randint(20, 1000))
     initial = gen.board.copy()
     x_out = [a.value for x in initial.rows.values() for a in x]
 
@@ -28,7 +28,7 @@ def get_sample(random_replace=True):
     x_in = [a.value for x in removed.rows.values() for a in x]
 
     if random_replace:
-        x_in = replace_with_zeros(x_in, ratio=0.7)
+        x_in = replace_with_zeros(x_in, ratio=0.6)
 
     return x_in, x_out
 

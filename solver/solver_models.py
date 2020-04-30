@@ -14,6 +14,8 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.keras.engine.base_layer import Layer
+import numpy as np
+from generator.Generator import Generator
 
 
 class TTGaussianNoise(Layer):
@@ -62,3 +64,24 @@ def get_model():
     model.summary()
 
     return model
+
+
+def predict(arr, model):
+    batch_size = 64
+    x_in = [arr] * batch_size
+    x_pos = [list(range(81))] * batch_size
+
+    X_in = np.array(x_in)
+    X_pos = np.array(x_pos)
+
+    pred = model.predict([X_in, X_pos])
+    pred = pred.argmax(axis=-1)
+
+    pred_gens = [Generator(pred[i, ...].ravel().tolist()) for i in range(32)]
+
+    for pred_gen in pred_gens:
+        if pred_gen.board.is_solved():
+            return pred_gen
+
+    return pred_gens[0]
+

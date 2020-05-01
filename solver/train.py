@@ -4,7 +4,7 @@ sys.path.append("..")
 
 from solver.utils import gen
 from solver.solver_models import get_model
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 if __name__ == "__main__":
     model = get_model()
@@ -25,5 +25,7 @@ if __name__ == "__main__":
         steps_per_epoch=128,
         callbacks=[checkpoint, reduce],
         validation_data=gen(),
-        validation_steps=64,
+        validation_steps=32,
+        use_multiprocessing=True,
+        workers=8
     )

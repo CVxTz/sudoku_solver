@@ -1,3 +1,5 @@
+import time
+from pathlib import Path
 from random import choice
 
 import cv2
@@ -5,9 +7,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-import time
 from skimage.morphology import square, dilation
-from pathlib import Path
 
 
 def get_grid_char_img(fonts_paths):
@@ -90,7 +90,7 @@ def get_char_img(fonts_paths):
     color = (0, 0, 0) if np.random.uniform(0, 1) < 0.9 else \
         (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
 
-    draw.text((np.random.randint(0, size//2 + 1), np.random.randint(0, size//5)), str(integer), color, font=font)
+    draw.text((np.random.randint(0, size // 2 + 1), np.random.randint(0, size // 5)), str(integer), color, font=font)
 
     img = np.array(pil_img)
 

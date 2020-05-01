@@ -1,7 +1,5 @@
 # Modified from https://github.com/RutledgePaulV/sudoku-generator
 
-import random
-
 from generator.Cell import Cell
 
 

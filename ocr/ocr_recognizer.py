@@ -61,7 +61,7 @@ def get_seq():
             sometimes(iaa.AveragePooling([1, 5])),
             sometimes(iaa.MaxPooling([1, 5])),
             sometimes(iaa.MaxPooling([1, 5])),
-            sometimes(iaa.CropAndPad(percent=(0, 0.2),pad_mode=["constant", "edge"], pad_cval=(0, 128))),
+            sometimes(iaa.CropAndPad(percent=(0, 0.2), pad_mode=["constant", "edge"], pad_cval=(0, 128))),
             sometimes(iaa.Sequential([iaa.Resize({"height": 64, "width": 64}),
                                       iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
             sometimes(iaa.Sequential([iaa.Resize({"height": 16, "width": 16}),

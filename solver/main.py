@@ -1,17 +1,15 @@
 import sys
 
-import numpy as np
 import cv2
-
+import numpy as np
 
 sys.path.append("..")
-from generator.Generator import Generator
+from generator.Generator import Generator, chunker
 from generator import base_numbers
-from solver.solver_models import get_model, predict
+from solver.solver_models import get_model, predict, predict_sequential
 from ocr.ocr_decoder import img_to_grid
 from ocr.ocr_detector import get_detector
 from ocr.ocr_recognizer import get_recognizer
-
 
 if __name__ == "__main__":
     solver = get_model()
@@ -43,9 +41,9 @@ if __name__ == "__main__":
 
     print("removed solved ?", removed.is_solved())
 
-    x_in = [a.value for x in removed.rows.values() for a in x]
+    x_in = [[a.value for a in x] for x in removed.rows.values()]
 
-    pred_gen = predict(x_in, solver)
+    pred_gen = predict_sequential(x_in, solver)
 
     print("Prediction solved ?", pred_gen.board.is_solved())
 
@@ -61,29 +59,32 @@ if __name__ == "__main__":
              5, 6, 0, 0, 0, 9, 1, 0, 0,
              8, 0, 7, 0, 0, 3, 4, 0, 0]
 
-    pred_gen = predict(x_new, solver)
+    x_new = chunker(x_new, size=9)
+
+    pred_gen = predict_sequential(x_new, solver)
 
     print("Medium Prediction solved ?", pred_gen.board.is_solved())
     print(pred_gen.board)
 
     print("From OCR : ")
 
-    img = cv2.imread("example5.png")
+    img = cv2.imread("example6.png")
 
     grid = img_to_grid(img, detector_model, recognizer_model, plot_path="plot.png", print_result=False)
 
     for l in grid:
         print(l)
 
-    x_ocr = [x for a in grid for x in a]
+    x_ocr = [[a for a in x] for x in grid]
 
-    pred_gen = predict(x_ocr, solver)
+    pred_gen = predict_sequential(x_ocr, solver)
 
-    print("OCR Prediction solved ?", pred_gen.board.is_solved())
+    print("OCR Seq Prediction solved ?", pred_gen.board.is_solved())
     print(pred_gen.board)
 
+    x_ocr = [[a for a in x] for x in grid]
 
+    pred_gen = predict_sequential(x_ocr, solver)
 
-
-
-
+    print("OCR oneshot Prediction solved ?", pred_gen.board.is_solved())
+    print(pred_gen.board)

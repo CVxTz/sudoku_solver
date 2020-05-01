@@ -1,11 +1,8 @@
-from pathlib import Path
-
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage import measure
 
-from ocr.generate_samples import get_grid_char_img
 from ocr.ocr_detector import get_detector
 from ocr.ocr_recognizer import get_recognizer
 
@@ -54,7 +51,6 @@ def predict_char_class(recognizer_model, img, all_chars):
 
 
 def bucket_l(l, cutoff=10):
-
     res = [[]]
 
     for x in l:
@@ -88,7 +84,8 @@ def infer_rows_and_cols(chars):
         for c in col:
             char = 0
             for c_char in chars:
-                if (abs((c_char['minc']+c_char['maxc'])/2 - c) + abs((c_char['minr']+c_char['maxr'])/2 - r)) < 2*cutoff:
+                if (abs((c_char['minc'] + c_char['maxc']) / 2 - c) + abs(
+                        (c_char['minr'] + c_char['maxr']) / 2 - r)) < 2 * cutoff:
                     char = c_char['char']
                     break
             r_i.append(char)
@@ -133,7 +130,6 @@ def img_to_grid(img, detector_model, recognizer_model, plot_path=None, print_res
 
 
 if __name__ == "__main__":
-
     detector_model_h5 = "ocr_detector.h5"
     detector_model = get_detector()
     detector_model.load_weights(detector_model_h5)

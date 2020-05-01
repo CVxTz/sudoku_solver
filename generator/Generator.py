@@ -1,8 +1,10 @@
 # Modified from https://github.com/RutledgePaulV/sudoku-generator
-from generator.Board import *
-import functools
+from random import shuffle
+
 import numpy as np
 
+from generator.Board import *
+import random
 
 class Generator:
 
@@ -10,7 +12,15 @@ class Generator:
     def __init__(self, base_numbers, shuffle_base=False):
 
         # constructing board
-        local_base = shuffle_board(base_numbers.copy()) if shuffle_base else base_numbers.copy()
+        if shuffle_base:
+            local_base = shuffle_board(base_numbers.copy())
+            shuffled_index = list(range(1, 10))
+            shuffle(shuffled_index)
+            mapping = {k: v for k, v in zip(range(1, 10), shuffled_index)}
+            local_base = [mapping[x] for x in local_base]
+        else:
+            local_base = base_numbers.copy()
+
         self.board = Board(local_base)
 
     # function randomizes an existing complete puzzle

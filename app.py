@@ -33,7 +33,7 @@ if file:
     img = read_from_file(file)
 
     grid = img_to_grid(
-        img, detector_model, recognizer_model, plot_path="plot.png", print_result=False
+        img, detector_model, recognizer_model, plot_path=None, print_result=False
     )
 
     x = [a for x in grid for a in x]
@@ -65,8 +65,8 @@ if file:
         "<center>" + to_solve_board.html() + "</center>", unsafe_allow_html=True
     )
 
-    st.markdown("<center><h3>OCR Soduku</h3></center>", unsafe_allow_html=True)
-    fig = plt.figure()
-    plt.imshow(read_img_from_path("plot.png"))
-    plt.axis("off")
-    st.pyplot(bbox_inches="tight", pad_inches=0.7)
+    # st.markdown("<center><h3>OCR Soduku</h3></center>", unsafe_allow_html=True)
+    # fig = plt.figure()
+    # plt.imshow(read_img_from_path("plot.png"))
+    # plt.axis("off")
+    # st.pyplot(bbox_inches="tight", pad_inches=0.7)

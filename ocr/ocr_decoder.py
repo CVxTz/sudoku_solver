@@ -16,7 +16,9 @@ def mask_to_bboxes(show_mask, threshold=40):
         if region.area >= threshold:
             minr, minc, maxr, maxc = region.bbox
 
-            all_chars.append({"char": None, "minc": minc, "maxc": maxc, "minr": minr, "maxr": maxr})
+            all_chars.append(
+                {"char": None, "minc": minc, "maxc": maxc, "minr": minr, "maxr": maxr}
+            )
 
     return all_chars
 
@@ -31,10 +33,10 @@ def predict_char_class(recognizer_model, img, all_chars):
     list_bboxes = []
 
     for char in all_chars:
-        minr, minc, maxr, maxc = char['minr'], char['minc'], char['maxr'], char['maxc']
+        minr, minc, maxr, maxc = char["minr"], char["minc"], char["maxr"], char["maxc"]
         size = max(maxr - minr, maxc - minc)
 
-        list_bboxes.append(img[minr:(minr + size), minc:(minc + size), :])
+        list_bboxes.append(img[minr : (minr + size), minc : (minc + size), :])
 
     list_bboxes = [cv2.resize(x, (32, 32)) for x in list_bboxes]
 
@@ -65,8 +67,8 @@ def bucket_l(l, cutoff=10):
 def infer_rows_and_cols(chars):
     cutoff = 10
 
-    row = [(x['maxr'] + x['minr']) / 2 for x in chars]
-    col = [(x['maxc'] + x['minc']) / 2 for x in chars]
+    row = [(x["maxr"] + x["minr"]) / 2 for x in chars]
+    col = [(x["maxc"] + x["minc"]) / 2 for x in chars]
 
     row = sorted(row)
     col = sorted(col)
@@ -84,9 +86,11 @@ def infer_rows_and_cols(chars):
         for c in col:
             char = 0
             for c_char in chars:
-                if (abs((c_char['minc'] + c_char['maxc']) / 2 - c) + abs(
-                        (c_char['minr'] + c_char['maxr']) / 2 - r)) < 2 * cutoff:
-                    char = c_char['char']
+                if (
+                    abs((c_char["minc"] + c_char["maxc"]) / 2 - c)
+                    + abs((c_char["minr"] + c_char["maxr"]) / 2 - r)
+                ) < 2 * cutoff:
+                    char = c_char["char"]
                     break
             r_i.append(char)
         grid.append(r_i)
@@ -94,7 +98,9 @@ def infer_rows_and_cols(chars):
     return grid
 
 
-def img_to_grid(img, detector_model, recognizer_model, plot_path=None, print_result=False):
+def img_to_grid(
+    img, detector_model, recognizer_model, plot_path=None, print_result=False
+):
     img = cv2.resize(img, (256, 256))
 
     show_mask = predict_mask(detector_model, img)
@@ -110,7 +116,12 @@ def img_to_grid(img, detector_model, recognizer_model, plot_path=None, print_res
         ax.imshow(img, cmap=plt.cm.gray)
 
         for char in all_chars:
-            minr, minc, maxr, maxc = char['minr'], char['minc'], char['maxr'], char['maxc']
+            minr, minc, maxr, maxc = (
+                char["minr"],
+                char["minc"],
+                char["maxr"],
+                char["maxc"],
+            )
 
             bx = (minc, maxc, maxc, minc, minc)
             by = (minr, minr, maxr, maxr, minr)
@@ -140,4 +151,6 @@ if __name__ == "__main__":
 
     img = cv2.imread("example6.png")
 
-    img_to_grid(img, detector_model, recognizer_model, plot_path="plot.png", print_result=False)
+    img_to_grid(
+        img, detector_model, recognizer_model, plot_path="plot.png", print_result=False
+    )

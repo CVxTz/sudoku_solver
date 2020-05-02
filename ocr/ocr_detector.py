@@ -44,24 +44,51 @@ def get_detector():
     conv5 = Conv2D(16 * 2 ** i, 3, padding="same", activation="selu")(pool4)
     conv5 = Conv2D(16 * 2 ** i, 3, padding="same", activation="selu")(conv5)
 
-    up6 = concatenate([Conv2DTranspose(16 * 2 ** i, 2, strides=2, padding="same", activation="selu")(conv5),
-                       conv4], axis=3)
+    up6 = concatenate(
+        [
+            Conv2DTranspose(
+                16 * 2 ** i, 2, strides=2, padding="same", activation="selu"
+            )(conv5),
+            conv4,
+        ],
+        axis=3,
+    )
     conv6 = Conv2D(8 * 2 ** i, (3, 3), padding="same", activation="selu")(up6)
     conv6 = Conv2D(8 * 2 ** i, (3, 3), padding="same", activation="selu")(conv6)
 
-    up7 = concatenate([Conv2DTranspose(8 * 2 ** i, 2, strides=2, padding="same", activation="selu")(conv6),
-                       conv3],
-                      axis=3)
+    up7 = concatenate(
+        [
+            Conv2DTranspose(
+                8 * 2 ** i, 2, strides=2, padding="same", activation="selu"
+            )(conv6),
+            conv3,
+        ],
+        axis=3,
+    )
     conv7 = Conv2D(4 * 2 ** i, 3, padding="same", activation="selu")(up7)
     conv7 = Conv2D(4 * 2 ** i, 3, padding="same", activation="selu")(conv7)
 
-    up8 = concatenate([Conv2DTranspose(4 * 2 ** i, 2, strides=2, padding="same", activation="selu")(conv7),
-                       conv2], axis=3, )
+    up8 = concatenate(
+        [
+            Conv2DTranspose(
+                4 * 2 ** i, 2, strides=2, padding="same", activation="selu"
+            )(conv7),
+            conv2,
+        ],
+        axis=3,
+    )
     conv8 = Conv2D(3 * 2 ** i, (3, 3), padding="same", activation="selu")(up8)
     conv8 = Conv2D(3 * 2 ** i, (3, 3), padding="same", activation="selu")(conv8)
 
-    up9 = concatenate([Conv2DTranspose(2 * 2 ** i, 2, strides=2, padding="same", activation="selu")(conv8),
-                       conv1], axis=3, )
+    up9 = concatenate(
+        [
+            Conv2DTranspose(
+                2 * 2 ** i, 2, strides=2, padding="same", activation="selu"
+            )(conv8),
+            conv1,
+        ],
+        axis=3,
+    )
     conv9 = Conv2D(2 * 2 ** i, (3, 3), padding="same", activation="selu")(up9)
     conv9 = Conv2D(2 * 2 ** i, (3, 3), padding="same", activation="selu")(conv9)
 
@@ -70,9 +97,7 @@ def get_detector():
     model = Model(inputs=[inputs], outputs=[conv10])
 
     model.compile(
-        optimizer=Adam(lr=3e-4),
-        loss=losses.binary_crossentropy,
-        metrics=["acc"],
+        optimizer=Adam(lr=3e-4), loss=losses.binary_crossentropy, metrics=["acc"],
     )
 
     model.summary()
@@ -90,11 +115,22 @@ def get_seq():
             sometimes(iaa.AverageBlur(k=((5, 11), (1, 3)))),
             sometimes(iaa.AveragePooling([2, 8])),
             sometimes(iaa.MaxPooling([2, 8])),
-            sometimes(iaa.Sequential([iaa.Resize({"height": 64, "width": 64}),
-                                      iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
-            sometimes(iaa.Sequential([iaa.Resize({"height": 512, "width": 512}),
-                                      iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
-
+            sometimes(
+                iaa.Sequential(
+                    [
+                        iaa.Resize({"height": 64, "width": 64}),
+                        iaa.Resize({"height": input_shape[0], "width": input_shape[1]}),
+                    ]
+                )
+            ),
+            sometimes(
+                iaa.Sequential(
+                    [
+                        iaa.Resize({"height": 512, "width": 512}),
+                        iaa.Resize({"height": input_shape[0], "width": input_shape[1]}),
+                    ]
+                )
+            ),
         ],
         random_order=True,
     )
@@ -104,8 +140,9 @@ def get_seq():
 def gen(size=8, fonts_path="ttf", augment=True):
     seq = get_seq()
 
-    fonts_paths = [str(x) for x in Path(fonts_path).glob("*.otf")] + \
-                  [str(x) for x in Path(fonts_path).glob("*.ttf")]
+    fonts_paths = [str(x) for x in Path(fonts_path).glob("*.otf")] + [
+        str(x) for x in Path(fonts_path).glob("*.ttf")
+    ]
 
     while True:
 

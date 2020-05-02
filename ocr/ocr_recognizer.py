@@ -4,11 +4,7 @@ import imgaug.augmenters as iaa
 import numpy as np
 from tensorflow.keras import losses
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.layers import (
-    Conv2D,
-    GlobalMaxPool2D,
-    Dense
-)
+from tensorflow.keras.layers import Conv2D, GlobalMaxPool2D, Dense
 from tensorflow.keras.layers import Input, MaxPooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -61,12 +57,27 @@ def get_seq():
             sometimes(iaa.AveragePooling([1, 5])),
             sometimes(iaa.MaxPooling([1, 5])),
             sometimes(iaa.MaxPooling([1, 5])),
-            sometimes(iaa.CropAndPad(percent=(0, 0.2), pad_mode=["constant", "edge"], pad_cval=(0, 128))),
-            sometimes(iaa.Sequential([iaa.Resize({"height": 64, "width": 64}),
-                                      iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
-            sometimes(iaa.Sequential([iaa.Resize({"height": 16, "width": 16}),
-                                      iaa.Resize({"height": input_shape[0], "width": input_shape[1]})])),
-
+            sometimes(
+                iaa.CropAndPad(
+                    percent=(0, 0.2), pad_mode=["constant", "edge"], pad_cval=(0, 128)
+                )
+            ),
+            sometimes(
+                iaa.Sequential(
+                    [
+                        iaa.Resize({"height": 64, "width": 64}),
+                        iaa.Resize({"height": input_shape[0], "width": input_shape[1]}),
+                    ]
+                )
+            ),
+            sometimes(
+                iaa.Sequential(
+                    [
+                        iaa.Resize({"height": 16, "width": 16}),
+                        iaa.Resize({"height": input_shape[0], "width": input_shape[1]}),
+                    ]
+                )
+            ),
         ],
         random_order=True,
     )
@@ -76,8 +87,9 @@ def get_seq():
 def gen(size=128, fonts_path="ttf", augment=True):
     seq = get_seq()
 
-    fonts_paths = [str(x) for x in Path(fonts_path).glob("*.otf")] + \
-                  [str(x) for x in Path(fonts_path).glob("*.ttf")]
+    fonts_paths = [str(x) for x in Path(fonts_path).glob("*.otf")] + [
+        str(x) for x in Path(fonts_path).glob("*.ttf")
+    ]
 
     while True:
 

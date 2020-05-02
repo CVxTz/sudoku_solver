@@ -59,7 +59,13 @@ class Board:
     # returning all possible values that could be assigned to the
     # cell provided as argument
     def get_possibles(self, cell):
-        all = (a for x in [self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]] for a in x)
+        all = (
+            a
+            for x in [
+                self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]
+            ]
+            for a in x
+        )
         excluded = set([x.value for x in all if x.value != 0 and x != cell])
         results = [x for x in range(1, 10) if x not in excluded]
         return results

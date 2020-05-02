@@ -1,10 +1,11 @@
 # Modified from https://github.com/RutledgePaulV/sudoku-generator
+import random
 from random import shuffle
 
 import numpy as np
 
 from generator.Board import *
-import random
+
 
 class Generator:
 

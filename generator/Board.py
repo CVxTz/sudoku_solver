@@ -149,15 +149,15 @@ class Board:
         solved = True
 
         for x, v in self.rows.items():
-            v = [x.value for x in v]
+            v = [x.value for x in v if x.value != 0]
             solved = solved and len(set(v)) == 9
 
         for x, v in self.columns.items():
-            v = [x.value for x in v]
+            v = [x.value for x in v if x.value != 0]
             solved = solved and len(set(v)) == 9
 
         for x, v in self.boxes.items():
-            v = [x.value for x in v]
+            v = [x.value for x in v if x.value != 0]
             solved = solved and len(set(v)) == 9
 
         return solved

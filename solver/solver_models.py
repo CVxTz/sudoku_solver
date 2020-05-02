@@ -11,9 +11,6 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.engine.base_layer import Layer
 from tensorflow.python.ops import array_ops
 
-from generator.Generator import Generator
-from solver.utils import binarize_along_last_axis
-
 
 class TTGaussianNoise(Layer):
     def __init__(self, stddev, **kwargs):
@@ -73,65 +70,3 @@ def get_model():
     model.summary()
 
     return model
-
-
-def predict(arr, model):
-    x_in = [arr]
-
-    X_in = np.array(x_in)
-    X_in = binarize_along_last_axis(X_in, n_classes=10)
-
-    pred = model.predict(X_in)
-    pred = pred.argmax(axis=-1)
-
-    pred_gen = Generator(pred[0, ...].ravel().tolist())
-
-    return pred_gen
-
-
-def predict_sequential(arr, model):
-
-    X_in = np.array(arr)
-
-    while np.sum(X_in == 0):
-        X = X_in[np.newaxis, ...]
-        X = binarize_along_last_axis(X, n_classes=10)
-
-        pred = model.predict(X).squeeze()
-
-        pred_max = pred.max(axis=-1)
-        pred_argmax = pred.argmax(axis=-1)
-
-        i_all, j_all = np.where(X_in == 0)
-        max_idx = pred_max[X_in == 0].argmax()
-        i, j = i_all[max_idx], j_all[max_idx]
-
-        X_in[i, j] = pred_argmax[i, j]
-
-    sodoku_gen = Generator(X_in.ravel().tolist())
-
-    return sodoku_gen
-
-
-if __name__ == "__main__":
-
-    arr = np.array([[1, 2, 3], [1, 0, 3], [0, 0, 3]])
-    pred = np.array([[[9.1, 12.9, 0.3], [5.15, 111.9, 0.3], [7.1, 3.9, 5.3]],
-                     [[0.1, 0.9, 0.3], [0.1, 5.9, 7.3], [0.1, 9.9, 0.3]],
-                     [[110.1, 0.9, 0.3], [0.1, 2.9, 0.3], [0.1, 0.9, 0.3]]])
-
-    pred_max = pred.max(axis=-1)
-    pred_argmax = pred.argmax(axis=-1)
-    print(arr)
-    print(pred_max)
-    print(pred_argmax)
-
-    max_value = pred_max[arr == 0].max()
-    max_idx = pred_max[arr == 0].argmax()
-
-    i, j = np.where(arr == 0)
-    print(i)
-    print(j)
-
-    print(max_value)
-    print(max_idx)

@@ -76,7 +76,6 @@ def predict_sequential_deterministic(arr, model):
 
         X_in[i, j] = pred_argmax[i, j]
 
-
     sodoku_gen = Generator(X_in.ravel().tolist())
 
     return sodoku_gen
@@ -86,7 +85,6 @@ def predict_sequential_random(arr, model):
     X_in = np.array(arr)
 
     while np.sum(X_in == 0):
-
         X = X_in[np.newaxis, ...]
         X = binarize_along_last_axis(X, n_classes=10)
 
@@ -143,3 +141,28 @@ def solve_sudoku(arr, model):
 
     print("Could not be solved")
     return pred_gen
+
+
+def backtracking_solve(board):
+    vacants = board.get_unused_cells()
+    index = 0
+    n_iter = 0
+    while -1 < index < len(vacants):
+        current = vacants[index]
+        flag = False
+        my_range = range(current.value + 1, 10)
+        for x in my_range:
+            if x in board.get_possibles(current):
+                n_iter += 1
+                current.value = x
+                flag = True
+                break
+        if not flag:
+            current.value = 0
+            index -= 1
+        else:
+            index += 1
+    if len(vacants) == 0:
+        return n_iter, False
+    else:
+        return n_iter, index == len(vacants)

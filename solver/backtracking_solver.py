@@ -36,3 +36,4 @@ if __name__ == "__main__":
     print("Solved in %s iterations" % n_iter)
     print("Solving Time : ", time.time() - start)
     print(to_solve_board.is_solved())
+    print(to_solve_board.html())

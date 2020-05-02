@@ -143,8 +143,17 @@ def solve_sudoku(arr, model):
     return pred_gen
 
 
+def set_initially_available(cells):
+    for cell in cells:
+        if cell.value == 0:
+            cell.initially_available = False
+        else:
+            cell.initially_available = True
+
+
 def backtracking_solve(board):
     # Modified from https://github.com/RutledgePaulV/sudoku-generator/blob/master/Sudoku/Solver.py
+    set_initially_available(board.cells)
     to_be_filled = board.get_unused_cells()
     index = 0
     n_iter = 0

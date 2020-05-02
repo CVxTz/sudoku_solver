@@ -146,7 +146,7 @@ class Board:
                     row_string += "<td>%s</td>"
                 else:
                     values.append(x.value)
-                    row_string += "<td>%d</td>"
+                    row_string += "<td>%d</td>" if x.initially_available else "<td><b>%d</b></td>"
             row_string += "</tr>"
             html += row_string % tuple(values)
         html += "</table>"

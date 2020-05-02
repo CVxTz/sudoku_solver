@@ -48,9 +48,8 @@ if file:
         "<center>" + to_solve_board.html() + "</center>", unsafe_allow_html=True
     )
 
-    st.markdown("<h3>OCR Soduku</h3>", unsafe_allow_html=True)
-
+    st.markdown("<center><h3>OCR Soduku</h3></center>", unsafe_allow_html=True)
     fig = plt.figure()
     plt.imshow(read_img_from_path("plot.png"))
     plt.axis("off")
-    st.pyplot()
+    st.pyplot(bbox_inches="tight", pad_inches=0.7)

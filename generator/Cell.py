@@ -10,6 +10,7 @@ class Cell:
         self.box = box
 
         self.value = 0
+        self.initially_available = False
 
     # returns a string representation of cell (for debugging)
     def __str__(self):

@@ -18,10 +18,10 @@ if __name__ == "__main__":
     recognizer_model = get_recognizer()
     recognizer_model.load_weights(recognizer_model_h5)
 
-    img = cv2.imread("example2.png")
+    img = cv2.imread("samples/wiki_sudoku.png")
 
     grid = img_to_grid(
-        img, detector_model, recognizer_model, plot_path="plot.png", print_result=False
+        img, detector_model, recognizer_model, plot_path="samples/wiki_plot.png", print_result=False
     )
     x = [a for x in grid for a in x]
 

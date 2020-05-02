@@ -1,7 +1,18 @@
 from generator.Generator import Generator
 import numpy as np
-
+import imageio
 from generator import base_numbers
+
+
+def read_img_from_path(path):
+    img = imageio.imread(path, pilmode="RGB")
+    return img
+
+
+def read_from_file(file_object):
+    img = imageio.imread(file_object, pilmode="RGB")
+
+    return img
 
 
 def replace_with_zeros(x_arr, ratio=0.5):

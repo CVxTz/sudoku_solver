@@ -5,3 +5,4 @@ tensorflow==2.0.1
 imgaug==0.3.0
 matplotlib==3.1.1
 Pillow==7.1.2
+imageio

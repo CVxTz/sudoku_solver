@@ -47,7 +47,7 @@ if file:
         "<center>" + initial_board.html() + "</center>", unsafe_allow_html=True
     )
 
-    time.sleep(3)
+    time.sleep(0.5)
 
     to_solve_board = initial_board.copy()
     start = time.time()

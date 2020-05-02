@@ -41,8 +41,6 @@ def get_recognizer():
         metrics=["acc"],
     )
 
-    model.summary()
-
     return model
 
 

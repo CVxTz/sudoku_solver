@@ -19,7 +19,7 @@ recognizer_model.load_weights(recognizer_model_h5)
 
 st.title("Soduku Solver")
 
-file = st.file_uploader("Upload file", type=["jpg", "png"])
+file = st.file_uploader("Upload Sudoku image", type=["jpg", "png"])
 
 if file:
     img = read_from_file(file)

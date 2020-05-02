@@ -100,8 +100,6 @@ def get_detector():
         optimizer=Adam(lr=3e-4), loss=losses.binary_crossentropy, metrics=["acc"],
     )
 
-    model.summary()
-
     return model
 
 

@@ -5,7 +5,7 @@ import streamlit as st
 
 from generator.Board import Board
 from ocr.ocr_decoder import img_to_grid
-from solver.utils import backtracking_solve, read_from_file, read_img_from_path, load_model
+from solver.utils import backtracking_solve, read_from_file, read_img_from_path, load_model, set_initially_available
 
 detector_model, recognizer_model = load_model()
 
@@ -35,6 +35,7 @@ if file:
     x = [a for x in grid for a in x]
 
     initial_board = Board(x)
+    set_initially_available(initial_board.cells)
 
     solving_time = st.empty()
 
@@ -42,7 +43,7 @@ if file:
         "<center>" + initial_board.html() + "</center>", unsafe_allow_html=True
     )
 
-    time.sleep(0.5)
+    time.sleep(3)
 
     to_solve_board = initial_board.copy()
     start = time.time()

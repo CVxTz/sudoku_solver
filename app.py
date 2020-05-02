@@ -5,19 +5,23 @@ import streamlit as st
 
 from generator.Board import Board
 from ocr.ocr_decoder import img_to_grid
-from ocr.ocr_detector import get_detector
-from ocr.ocr_recognizer import get_recognizer
-from solver.utils import backtracking_solve, read_from_file, read_img_from_path
+from solver.utils import backtracking_solve, read_from_file, read_img_from_path, load_model
 
-detector_model_h5 = "ocr_detector.h5"
-detector_model = get_detector()
-detector_model.load_weights(detector_model_h5)
+detector_model, recognizer_model = load_model()
 
-recognizer_model_h5 = "ocr_recognizer.h5"
-recognizer_model = get_recognizer()
-recognizer_model.load_weights(recognizer_model_h5)
-
-st.title("Soduku Solver")
+st.sidebar.markdown(
+    """<h1>Sudoku Solver</h1>
+    <p>
+    <h3>Hello !</h3></br>
+    This a Sudoku Solver app that uses a custom OCR to detect digits in a cropped screenshot of a sudoku grid and then
+    uses backtracking to solve it before displaying the results
+    </p>
+    <p>
+    Upload an image of a sudoku grid and get the solved state. Scroll down if you want to see the OCR result.
+    </p>
+    """,
+    unsafe_allow_html=True,
+)
 
 file = st.file_uploader("Upload Sudoku image", type=["jpg", "png"])
 
@@ -32,19 +36,27 @@ if file:
 
     initial_board = Board(x)
 
+    solving_time = st.empty()
+
+    html_board = st.markdown(
+        "<center>" + initial_board.html() + "</center>", unsafe_allow_html=True
+    )
+
+    time.sleep(0.5)
+
     to_solve_board = initial_board.copy()
     start = time.time()
     n_iter, _ = backtracking_solve(to_solve_board)
     solve_duration = time.time() - start
 
-    st.markdown(
+    solving_time.markdown(
         "<center>"
         + "<h3>Solved in %.5f seconds and %s iterations</h3>" % (solve_duration, n_iter)
         + "</center>",
         unsafe_allow_html=True,
     )
 
-    st.markdown(
+    html_board.markdown(
         "<center>" + to_solve_board.html() + "</center>", unsafe_allow_html=True
     )
 

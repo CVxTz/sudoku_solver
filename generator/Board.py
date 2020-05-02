@@ -136,28 +136,31 @@ class Board:
 
     # exporting puzzle to a html table for prettier visualization
     def html(self):
-        html = "<table style='height:512px; width:512px; font-size: x-large; text-align:center;" \
-               " border: 4px solid black;'>"
+        html = (
+            "<table style='height:512px; width:512px; font-size: x-large; text-align:center;"
+            " border: 4px solid black;'>"
+        )
         for index, row in self.rows.items():
             values = []
-            row_string = "<tr>" if index % 3 != 0 else "<tr style='border-top: 4px solid black;'>"
+            row_string = (
+                "<tr>"
+                if index % 3 != 0
+                else "<tr style='border-top: 4px solid black;'>"
+            )
             for col, x in enumerate(row):
-                if x.value == 0:
-                    values.append(" ")
-                    row_string += "<td>%s</td>"
+                values.append(x.value)
+                if col % 3 != 0:
+                    row_string += (
+                        "<td style='background-color:#9b9a9e'>%s</td>"
+                        if x.initially_available or x.value == 0
+                        else "<td style='background-color:#5bc0de'><b>%s</b></td>"
+                    )
                 else:
-                    values.append(x.value)
-                    if col % 3 != 0:
-                        row_string += (
-                            "<td style='background-color:#9b9a9e'>%d</td>" if x.initially_available else
-                            "<td style='background-color:#5bc0de'><b>%d</b></td>"
-                        )
-                    else:
-                        row_string += (
-                            "<td style='background-color:#9b9a9e; border-left: 4px solid black;'>%d</td>"
-                            if x.initially_available else
-                            "<td style='background-color:#5bc0de; border-left: 4px solid black;'><b>%d</b></td>"
-                        )
+                    row_string += (
+                        "<td style='background-color:#9b9a9e; border-left: 4px solid black;'>%s</td>"
+                        if x.initially_available or x.value == 0
+                        else "<td style='background-color:#5bc0de; border-left: 4px solid black;'><b>%s</b></td>"
+                    )
 
             row_string += "</tr>"
             html += row_string % tuple(values)

@@ -3,6 +3,19 @@ import numpy as np
 
 from generator import base_numbers
 from generator.Generator import Generator
+from ocr.ocr_detector import get_detector
+from ocr.ocr_recognizer import get_recognizer
+
+
+def load_model():
+    detector_model_h5 = "ocr_detector.h5"
+    detector_model = get_detector()
+    detector_model.load_weights(detector_model_h5)
+
+    recognizer_model_h5 = "ocr_recognizer.h5"
+    recognizer_model = get_recognizer()
+    recognizer_model.load_weights(recognizer_model_h5)
+    return detector_model, recognizer_model
 
 
 def read_img_from_path(path):

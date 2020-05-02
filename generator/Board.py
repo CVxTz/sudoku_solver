@@ -52,13 +52,15 @@ class Board:
 
     # returning cells in puzzle that are set to zero
     def get_unused_cells(self):
-        return [x for x in self.cells if x.value == 0]
+        unused_cells = [x for x in self.cells if x.value == 0]
+        unused_cells.sort(key=lambda x: len(self.get_possibles(x)))
+        return unused_cells
 
     # returning all possible values that could be assigned to the
     # cell provided as argument
     def get_possibles(self, cell):
-        all = self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]
-        excluded = set([x.value for x in all if x.value != 0 and x.value != cell.value])
+        all = (a for x in [self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]] for a in x)
+        excluded = set([x.value for x in all if x.value != 0 and x != cell])
         results = [x for x in range(1, 10) if x not in excluded]
         return results
 

@@ -144,15 +144,17 @@ def solve_sudoku(arr, model):
 
 
 def backtracking_solve(board):
-    vacants = board.get_unused_cells()
+    # Modified from https://github.com/RutledgePaulV/sudoku-generator/blob/master/Sudoku/Solver.py
+    to_be_filled = board.get_unused_cells()
     index = 0
     n_iter = 0
-    while -1 < index < len(vacants):
-        current = vacants[index]
+    while -1 < index < len(to_be_filled):
+        current = to_be_filled[index]
         flag = False
+        possible_values = board.get_possibles(current)
         my_range = range(current.value + 1, 10)
         for x in my_range:
-            if x in board.get_possibles(current):
+            if x in possible_values:
                 n_iter += 1
                 current.value = x
                 flag = True
@@ -162,7 +164,7 @@ def backtracking_solve(board):
             index -= 1
         else:
             index += 1
-    if len(vacants) == 0:
+    if len(to_be_filled) == 0:
         return n_iter, False
     else:
-        return n_iter, index == len(vacants)
+        return n_iter, index == len(to_be_filled)

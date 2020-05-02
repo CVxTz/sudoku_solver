@@ -7,7 +7,7 @@ from ocr.ocr_decoder import img_to_grid
 from ocr.ocr_detector import get_detector
 from ocr.ocr_recognizer import get_recognizer
 import cv2
-
+import time
 
 if __name__ == "__main__":
     detector_model_h5 = "ocr_detector.h5"
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     recognizer_model = get_recognizer()
     recognizer_model.load_weights(recognizer_model_h5)
 
-    img = cv2.imread("example6.png")
+    img = cv2.imread("example2.png")
 
     grid = img_to_grid(img, detector_model, recognizer_model, plot_path="plot.png", print_result=False)
     x = [a for x in grid for a in x]
@@ -28,11 +28,9 @@ if __name__ == "__main__":
     print(initial_board)
 
     to_solve_board = initial_board.copy()
-
+    start = time.time()
     n_iter, _ = backtracking_solve(to_solve_board)
-
     print(to_solve_board)
-    print(to_solve_board.is_solved())
     print("Solved in %s iterations" % n_iter)
-
-
+    print("Solving Time : ", time.time() - start)
+    print(to_solve_board.is_solved())

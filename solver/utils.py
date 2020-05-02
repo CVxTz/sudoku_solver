@@ -1,7 +1,8 @@
-from generator.Generator import Generator
-import numpy as np
 import imageio
+import numpy as np
+
 from generator import base_numbers
+from generator.Generator import Generator
 
 
 def read_img_from_path(path):

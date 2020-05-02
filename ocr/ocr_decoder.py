@@ -36,7 +36,7 @@ def predict_char_class(recognizer_model, img, all_chars):
         minr, minc, maxr, maxc = char["minr"], char["minc"], char["maxr"], char["maxc"]
         size = max(maxr - minr, maxc - minc)
 
-        list_bboxes.append(img[minr: (minr + size), minc: (minc + size), :])
+        list_bboxes.append(img[minr : (minr + size), minc : (minc + size), :])
 
     list_bboxes = [cv2.resize(x, (32, 32)) for x in list_bboxes]
 
@@ -87,8 +87,8 @@ def infer_rows_and_cols(chars):
             char = 0
             for c_char in chars:
                 if (
-                        abs((c_char["minc"] + c_char["maxc"]) / 2 - c)
-                        + abs((c_char["minr"] + c_char["maxr"]) / 2 - r)
+                    abs((c_char["minc"] + c_char["maxc"]) / 2 - c)
+                    + abs((c_char["minr"] + c_char["maxr"]) / 2 - r)
                 ) < 2 * cutoff:
                     char = c_char["char"]
                     break
@@ -99,7 +99,7 @@ def infer_rows_and_cols(chars):
 
 
 def img_to_grid(
-        img, detector_model, recognizer_model, plot_path=None, print_result=False
+    img, detector_model, recognizer_model, plot_path=None, print_result=False
 ):
     img = cv2.resize(img, (256, 256))
 
@@ -112,7 +112,7 @@ def img_to_grid(
     if plot_path is not None:
 
         fig, ax = plt.subplots(figsize=(15, 15))
-        plt.axis('off')
+        plt.axis("off")
 
         ax.imshow(img, cmap=plt.cm.gray)
 
@@ -130,7 +130,7 @@ def img_to_grid(
             ax.plot(bx, by, "-b", linewidth=1)
             ax.text(minc, minr, str(char["char"]), fontsize=24)
 
-        plt.savefig(plot_path, bbox_inches='tight', pad_inches=0)
+        plt.savefig(plot_path, bbox_inches="tight", pad_inches=0)
 
     grid = infer_rows_and_cols(all_chars)
 

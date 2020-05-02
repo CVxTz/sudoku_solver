@@ -1,15 +1,13 @@
-import sys
+import time
+
 import matplotlib.pyplot as plt
-import os
+import streamlit as st
+
 from generator.Board import Board
-from solver.utils import backtracking_solve, read_from_file, read_img_from_path
 from ocr.ocr_decoder import img_to_grid
 from ocr.ocr_detector import get_detector
 from ocr.ocr_recognizer import get_recognizer
-import time
-
-
-import streamlit as st
+from solver.utils import backtracking_solve, read_from_file, read_img_from_path
 
 detector_model_h5 = "ocr_detector.h5"
 detector_model = get_detector()
@@ -22,7 +20,6 @@ recognizer_model.load_weights(recognizer_model_h5)
 st.title("Soduku Solver")
 
 file = st.file_uploader("Upload file", type=["jpg", "png"])
-
 
 if file:
     img = read_from_file(file)
@@ -40,16 +37,20 @@ if file:
     n_iter, _ = backtracking_solve(to_solve_board)
     solve_duration = time.time() - start
 
-    st.markdown("<center>" + "<h3>Solved in %.5f seconds and %s iterations</h3>" % (solve_duration, n_iter) + "</center>",
-                unsafe_allow_html=True)
+    st.markdown(
+        "<center>"
+        + "<h3>Solved in %.5f seconds and %s iterations</h3>" % (solve_duration, n_iter)
+        + "</center>",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("<center>" + to_solve_board.html() + "</center>", unsafe_allow_html=True)
+    st.markdown(
+        "<center>" + to_solve_board.html() + "</center>", unsafe_allow_html=True
+    )
 
     st.markdown("<h3>OCR Soduku</h3>", unsafe_allow_html=True)
 
     fig = plt.figure()
     plt.imshow(read_img_from_path("plot.png"))
-    plt.axis('off')
+    plt.axis("off")
     st.pyplot()
-
-

@@ -21,7 +21,11 @@ if __name__ == "__main__":
     img = cv2.imread("samples/wiki_sudoku.png")
 
     grid = img_to_grid(
-        img, detector_model, recognizer_model, plot_path="samples/wiki_plot.png", print_result=False
+        img,
+        detector_model,
+        recognizer_model,
+        plot_path="samples/wiki_plot.png",
+        print_result=False,
     )
     x = [a for x in grid for a in x]
 

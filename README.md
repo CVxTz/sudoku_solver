@@ -2,12 +2,12 @@
 
 
 ### Initial Input
-<img src="https://raw.githubusercontent.com/CVxTz/sudoku_solver/master/solver/samples/wiki_sudoku.png" alt="drawing" width="312"/>
+<img src="https://raw.githubusercontent.com/CVxTz/sudoku_solver/master/solver/samples/wiki_sudoku.png" alt="drawing" width="330"/>
 
 Source : [https://en.wikipedia.org/wiki/Sudoku](https://en.wikipedia.org/wiki/Sudoku)
 
 ### Character Detection
-<img src="https://raw.githubusercontent.com/CVxTz/sudoku_solver/master/solver/samples/wiki_plot.png" alt="drawing" width="312"/>
+<img src="https://raw.githubusercontent.com/CVxTz/sudoku_solver/master/solver/samples/wiki_plot.png" alt="drawing" width="330"/>
 
 ### Solved
 

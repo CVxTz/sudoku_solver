@@ -14,11 +14,15 @@ st.sidebar.markdown(
     <p>
     <h3>Hello !</h3></br>
     This a Sudoku Solver app that uses a custom OCR to detect digits in a cropped screenshot of a sudoku grid and then
-    uses backtracking to solve it before displaying the results
+    uses backtracking to solve it before displaying the results.
     </p>
     <p>
     Upload an image of a sudoku grid and get the solved state. Scroll down if you want to see the OCR result.
     </p>
+    <img src='https://raw.githubusercontent.com/CVxTz/sudoku_solver/master/solver/samples/wiki_sudoku.png'
+         width="300"></br>
+    Image source : <a href='https://en.wikipedia.org/wiki/Sudoku'>Wikipedia Sudoku</a>
+
     """,
     unsafe_allow_html=True,
 )

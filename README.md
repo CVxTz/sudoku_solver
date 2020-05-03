@@ -1,6 +1,9 @@
 # sudoku_solver
 
-
+### Run
+```
+bash run_app.sh
+```
 ### Initial Input
 <img src="https://raw.githubusercontent.com/CVxTz/sudoku_solver/master/solver/samples/wiki_sudoku.png" alt="drawing" width="330"/>
 

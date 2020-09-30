@@ -1,3 +1,7 @@
+
+
+[![DOI](https://zenodo.org/badge/259007650.svg)](https://zenodo.org/badge/latestdoi/259007650)
+
 # sudoku_solver
 Code for : [https://towardsdatascience.com/building-a-sudoku-solving-application-with-computer-vision-and-backtracking-19668d0a1e2]()
 
@@ -192,3 +196,15 @@ Sudoku grid.
 
 References :
 [https://github.com/RutledgePaulV/sudoku-generator](https://github.com/RutledgePaulV/sudoku-generator)
+
+Cite:
+@software{mansar_youness_2020_4060213,
+  author       = {Mansar Youness},
+  title        = {CVxTz/sudoku\_solver: v0.3},
+  month        = sep,
+  year         = 2020,
+  publisher    = {Zenodo},
+  version      = {v0.3},
+  doi          = {10.5281/zenodo.4060213},
+  url          = {https://doi.org/10.5281/zenodo.4060213}
+}

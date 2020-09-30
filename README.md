@@ -198,6 +198,7 @@ References :
 [https://github.com/RutledgePaulV/sudoku-generator](https://github.com/RutledgePaulV/sudoku-generator)
 
 Cite:
+```
 @software{mansar_youness_2020_4060213,
   author       = {Mansar Youness},
   title        = {CVxTz/sudoku\_solver: v0.3},
@@ -208,3 +209,4 @@ Cite:
   doi          = {10.5281/zenodo.4060213},
   url          = {https://doi.org/10.5281/zenodo.4060213}
 }
+```

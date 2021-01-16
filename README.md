@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/259007650.svg)](https://zenodo.org/badge/latestdoi/259007650)
 
 # sudoku_solver
-Code for : [https://towardsdatascience.com/building-a-sudoku-solving-application-with-computer-vision-and-backtracking-19668d0a1e2]()
+Code for : [https://towardsdatascience.com/building-a-sudoku-solving-application-with-computer-vision-and-backtracking-19668d0a1e2](https://towardsdatascience.com/building-a-sudoku-solving-application-with-computer-vision-and-backtracking-19668d0a1e2)
 
 ### Run
 ```

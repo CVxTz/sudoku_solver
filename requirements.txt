@@ -4,6 +4,6 @@ numpy==1.17.3
 tensorflow==2.0.3
 imgaug==0.3.0
 matplotlib==3.1.1
-Pillow==7.1.2
+Pillow==9.3.0
 imageio
 streamlit
